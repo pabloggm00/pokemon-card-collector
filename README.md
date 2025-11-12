@@ -82,7 +82,7 @@ Todo orquestado con Docker Compose. Las imágenes de las cartas se obtienen de T
 
 - **Docker** (versión 20.10 o superior)
 - **Docker Compose** (versión 2.0 o superior)
-- **Conexión a Internet** (para la primera importación de datos y carga de imágenes)
+- **Conexión a Internet** 
 - **Puertos disponibles**: 
   - **8081** (frontend)
   - **3001** (backend API)
