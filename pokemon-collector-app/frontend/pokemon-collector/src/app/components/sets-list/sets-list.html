@@ -1,0 +1,142 @@
+<div class="sets-container">
+  <!-- Barra superior compacta con búsqueda y filtros -->
+  <div class="top-bar">
+    <div class="search-filter-group">
+      <div class="search-box">
+        <img src="assets/icons/search.svg" alt="" class="search-icon">
+        <input 
+          type="text" 
+          [(ngModel)]="searchQuery" 
+          (ngModelChange)="onSearch()"
+          placeholder="Buscar sets..."
+          class="search-input">
+      </div>
+      
+      <select 
+        [(ngModel)]="selectedSeriesId" 
+        (change)="onSeriesFilter()"
+        class="filter-select"
+        title="Filtrar por serie">
+        <option value="">Todas las series</option>
+        @for (serie of series; track serie.id) {
+          <option [value]="serie.id">{{ serie.name }}</option>
+        }
+      </select>
+
+      <select 
+        [(ngModel)]="sortOrder" 
+        (change)="onSortChange()"
+        class="filter-select"
+        title="Ordenar por fecha">
+        <option value="desc">Más recientes primero</option>
+        <option value="asc">Más antiguos primero</option>
+      </select>
+    </div>
+
+    <div class="top-bar-actions">
+      @if (sets.length > 0) {
+        @if (!selectionMode) {
+          <button class="btn-import" (click)="openImportModal()" title="Importar nuevo set">
+            <img src="assets/icons/download.svg" alt="" class="btn-icon">
+            Importar
+          </button>
+          <button class="btn-select" (click)="toggleSelectionMode()">
+            Seleccionar
+          </button>
+        } @else {
+          <button class="btn-select-all" (click)="toggleSelectAll()">
+            {{ selectedSetIds.size === sets.length ? 'Deseleccionar todos' : 'Seleccionar todos' }}
+          </button>
+          <button class="btn-delete-multiple" (click)="deleteSelected()" [disabled]="selectedSetIds.size === 0">
+            <img src="assets/icons/trash.svg" alt="" class="btn-icon">
+            Eliminar {{ selectedSetIds.size > 0 ? '(' + selectedSetIds.size + ')' : '' }}
+          </button>
+          <button class="btn-cancel" (click)="toggleSelectionMode()">
+            Cancelar
+          </button>
+        }
+      } @else {
+        <button class="btn-import" (click)="openImportModal()" title="Importar nuevo set">
+          <img src="assets/icons/download.svg" alt="" class="btn-icon">
+          Importar
+        </button>
+      }
+    </div>
+  </div>
+
+  @if (importingMessage) {
+    <div class="importing-notification" [class.success]="importingMessage.includes('✅')">
+      {{ importingMessage }}
+    </div>
+  }
+
+  @if (loading) {
+    <div class="loading">
+      <p>Cargando sets...</p>
+    </div>
+  }
+
+  @if (error) {
+    <div class="error">
+      <p>{{ error }}</p>
+      <button (click)="loadAllSets()">Reintentar</button>
+    </div>
+  }
+
+  @if (!loading && !error) {
+    <div class="sets-grid" [class.selection-mode]="selectionMode">
+      @for (set of sets; track set.id) {
+        <div class="set-card"
+          [class.selected]="selectionMode && isSetSelected(set.id)"
+          (click)="selectionMode ? toggleSetSelection(set.id) : null"
+        >
+        <div class="set-header">
+          @if (set.logoUrl) {
+            <img [src]="set.logoUrl" [alt]="set.name" class="set-logo">
+          }
+          <h2>{{ set.name }}</h2>
+        </div>
+        <div class="set-info">
+          <p class="set-total">Total de cartas: {{ set.totalCards }}</p>
+          <p class="set-date">Lanzamiento: {{ set.releaseDate | date: 'dd/MM/yyyy' }}</p>
+        </div>
+        <div class="set-actions">
+          @if (!selectionMode) {
+            <button [routerLink]="['/cards']" [queryParams]="{set: set.id}" class="btn-view-cards">Ver Cartas</button>
+            <button (click)="deleteSet(set)" class="btn-delete" title="Eliminar set">
+              <img src="assets/icons/trash.svg" alt="" class="icon-delete">
+            </button>
+          }
+        </div>
+      </div>
+      }
+    </div>
+  }
+
+  @if (!loading && !error && sets.length === 0) {
+    <div class="no-data">
+      <p>No hay sets disponibles</p>
+    </div>
+  }
+</div>
+
+<!-- Modal de importar set -->
+@if (showImportModal) {
+  <app-import-set-modal
+    (cancel)="closeImportModal()"
+    (success)="onImportSuccess()"
+  ></app-import-set-modal>
+}
+
+<!-- Modal de confirmación -->
+@if (showConfirmModal) {
+  <app-confirmation-modal
+    [title]="confirmModalTitle"
+    [message]="confirmModalMessage"
+    [type]="confirmModalType"
+    [confirmText]="'Eliminar'"
+    [cancelText]="'Cancelar'"
+    (confirm)="onConfirmAction()"
+    (cancel)="onCancelAction()">
+  </app-confirmation-modal>
+}

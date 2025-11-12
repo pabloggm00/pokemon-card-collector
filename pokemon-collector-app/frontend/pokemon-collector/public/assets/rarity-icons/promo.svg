@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Estrella negra con borde MUY FINO -->
+  <path d="M50 5 L61 38 L95 38 L68 58 L79 91 L50 71 L21 91 L32 58 L5 38 L39 38 Z" 
+        fill="#000000" 
+        stroke="#ffffff" 
+        stroke-width="0.5"/>
+  
+  <!-- Texto PROMO en arco MÁS CERRADO -->
+  <defs>
+    <path id="arcPath" d="M 15,95 A 35,35 0 0,1 84,99" fill="none"/>
+  </defs>
+  
+  <text font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#ffffff"
+        letter-spacing="-5" dy="-10">
+    <textPath href="#arcPath" startOffset="50%" text-anchor="middle">
+      PROMO
+    </textPath>
+  </text>
+</svg>

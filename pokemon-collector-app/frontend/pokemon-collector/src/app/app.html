@@ -1,0 +1,41 @@
+<!-- Pokémon Card Collector Application -->
+
+<div class="app-container">
+  <header class="app-header">
+    <div class="header-content">
+      <h1 class="app-title">
+        <img src="assets/icons/pokeball.svg" alt="Pokéball" class="pokeball-icon">
+        {{ title }}
+      </h1>
+      <nav class="main-nav">
+        <a routerLink="/series" routerLinkActive="active">
+          <img src="assets/icons/book.svg" alt="" class="nav-icon">
+          Series
+        </a>
+        <a routerLink="/sets" routerLinkActive="active">
+          <img src="assets/icons/grid.svg" alt="" class="nav-icon">
+          Sets
+        </a>
+        <a routerLink="/cards" routerLinkActive="active">
+          <img src="assets/icons/card.svg" alt="" class="nav-icon">
+          Cartas
+        </a>
+        <a routerLink="/collections" routerLinkActive="active">
+          <img src="assets/icons/diamond.svg" alt="" class="nav-icon">
+          Mis Colecciones
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="app-main">
+    <router-outlet></router-outlet>
+  </main>
+
+  <footer class="app-footer">
+    <p>
+      &copy; 2025 Pokémon Card Collector | 
+      Creado por <a href="https://pabloggm00.github.io/Portfolio/" target="_blank" rel="noopener noreferrer" class="creator-link">pablogonzalezdev</a>
+    </p>
+  </footer>
+</div>

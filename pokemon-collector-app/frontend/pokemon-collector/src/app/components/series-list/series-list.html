@@ -1,0 +1,92 @@
+<div class="series-container">
+  <div *ngIf="loading" class="loading">
+    <p>Cargando series...</p>
+  </div>
+
+  <div *ngIf="error" class="error">
+    <p>{{ error }}</p>
+    <button (click)="loadSeries()">Reintentar</button>
+  </div>
+
+  <div *ngIf="!loading && !error && sortedSeries.length > 0" class="series-list-header">
+    <div class="header-left">
+      <div class="search-container">
+        <img src="assets/icons/search.svg" alt="Buscar" class="search-icon">
+        <input 
+          type="text" 
+          placeholder="Buscar series..." 
+          class="search-input"
+          (input)="onSearchInput($any($event.target).value)"
+        >
+      </div>
+      <button (click)="toggleSortOrder()" class="sort-button" [title]="'Ordenar por fecha: ' + (sortOrder === 'desc' ? 'Más recientes primero' : 'Más antiguos primero')">
+        <span>Ordenar por fecha</span>
+        <img 
+          src="assets/icons/sort.svg" 
+          [class.reverse]="sortOrder === 'asc'" 
+          alt="Ordenar" 
+          class="sort-icon"
+        >
+      </button>
+    </div>
+    
+    <div class="header-right">
+      @if (!selectionMode) {
+        <button class="btn-select" (click)="toggleSelectionMode()">
+          Seleccionar
+        </button>
+      } @else {
+        <button class="btn-select-all" (click)="toggleSelectAll()">
+          {{ selectedSeriesIds.size === filteredSeries.length ? 'Deseleccionar todas' : 'Seleccionar todas' }}
+        </button>
+        <button class="btn-delete-multiple" (click)="deleteSelected()" [disabled]="selectedSeriesIds.size === 0">
+          <img src="assets/icons/trash.svg" alt="" class="btn-icon">
+          Eliminar {{ selectedSeriesIds.size > 0 ? '(' + selectedSeriesIds.size + ')' : '' }}
+        </button>
+        <button class="btn-cancel" (click)="toggleSelectionMode()">
+          Cancelar
+        </button>
+      }
+    </div>
+  </div>
+
+  <div *ngIf="!loading && !error" class="series-grid" [class.selection-mode]="selectionMode">
+    <div *ngFor="let serie of filteredSeries" 
+      class="series-card"
+      [class.selected]="selectionMode && isSeriesSelected(serie.id)"
+      (click)="selectionMode ? toggleSeriesSelection(serie.id) : null"
+    >
+      <div *ngIf="serie.logoUrl" class="series-logo">
+        <img [src]="serie.logoUrl" [alt]="serie.name">
+      </div>
+      <h2>{{ serie.name }}</h2>
+      <p class="series-date">Lanzamiento: {{ serie.releaseDate | date: 'dd/MM/yyyy' }}</p>
+      <p class="series-sets">{{ serie.sets?.length || 0 }} set(s)</p>
+      <div class="series-actions">
+        @if (!selectionMode) {
+          <button [routerLink]="['/sets']" [queryParams]="{seriesId: serie.id}" class="btn-view-sets">Ver Sets</button>
+          <button (click)="deleteSeries(serie, $event)" class="btn-delete" title="Eliminar serie">
+            <img src="assets/icons/trash.svg" alt="" class="icon-delete">
+          </button>
+        }
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="!loading && !error && series.length === 0" class="no-data">
+    <p>No hay series disponibles</p>
+  </div>
+</div>
+
+<!-- Modal de confirmación -->
+@if (showConfirmModal) {
+  <app-confirmation-modal
+    [title]="confirmModalTitle"
+    [message]="confirmModalMessage"
+    [type]="confirmModalType"
+    [confirmText]="'Eliminar'"
+    [cancelText]="'Cancelar'"
+    (confirm)="onConfirmAction()"
+    (cancel)="onCancelAction()">
+  </app-confirmation-modal>
+}

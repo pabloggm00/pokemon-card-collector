@@ -1,0 +1,97 @@
+<div class="modal-overlay" [class.loading]="loading">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Crear nueva colección</h2>
+    </div>
+
+    <div class="type-selector">
+      <div 
+        class="type-option" 
+        [class.selected]="collectionType === 'SET'"
+        (click)="collectionType = 'SET'">
+        <h3>Colección de Set</h3>
+        <p>Basada en un set existente</p>
+      </div>
+      <div 
+        class="type-option" 
+        [class.selected]="collectionType === 'CUSTOM'"
+        (click)="collectionType = 'CUSTOM'">
+        <h3>Colección personalizada</h3>
+        <p>Crea tu propia colección</p>
+      </div>
+    </div>
+
+    <form (ngSubmit)="onSubmit()">
+      @if (collectionType === 'SET') {
+        <div class="form-group">
+          <label for="setSelect">Selecciona un set</label>
+          <select 
+            id="setSelect" 
+            class="form-control"
+            [(ngModel)]="selectedSetId"
+            name="selectedSet"
+            required>
+            <option value="">Selecciona un set</option>
+            @for (set of availableSets; track set.id) {
+              <option [value]="set.id">
+                {{ set.name }}
+              </option>
+            }
+          </select>
+          @if (getSelectedSet(); as set) {
+            <div class="set-info">
+              <p>{{ set.description }}</p>
+            </div>
+          }
+        </div>
+      }
+
+      @if (collectionType === 'CUSTOM') {
+        <div class="form-group">
+          <label for="collectionName">Nombre de la colección</label>
+          <input 
+            type="text" 
+            id="collectionName"
+            class="form-control"
+            [(ngModel)]="collectionName"
+            name="collectionName"
+            required
+            placeholder="Introduce un nombre para tu colección">
+        </div>
+        
+        <div class="form-group">
+          <label for="collectionDescription">Descripción (opcional)</label>
+          <textarea 
+            id="collectionDescription"
+            class="form-control"
+            [(ngModel)]="collectionDescription"
+            name="collectionDescription"
+            rows="3"
+            placeholder="Describe tu colección"></textarea>
+        </div>
+      }
+
+      @if (error) {
+        <div class="error-message">
+          {{ error }}
+        </div>
+      }
+
+      <div class="buttons">
+        <button 
+          type="button" 
+          class="btn btn-secondary"
+          (click)="onCancel()"
+          [disabled]="loading">
+          Cancelar
+        </button>
+        <button 
+          type="submit" 
+          class="btn btn-primary"
+          [disabled]="!isValid() || loading">
+          {{ loading ? 'Creando...' : 'Crear colección' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

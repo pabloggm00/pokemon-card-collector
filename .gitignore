@@ -1,0 +1,95 @@
+# ========================
+# Pokemon Card Collector
+# Root .gitignore
+# ========================
+
+# Dependencies
+node_modules/
+**/node_modules/
+package-lock.json
+**/package-lock.json
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+**/.env
+**/.env.local
+
+# Database files
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+
+# Docker volumes and data
+postgres_data/
+**/postgres_data/
+.docker/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+logs/
+**/logs/
+
+# Build outputs
+dist/
+build/
+out/
+**/dist/
+**/build/
+**/out/
+
+# Angular specific
+.angular/
+**/.angular/
+**/browserslist
+
+# IDE and editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+*.sublime-project
+*.sublime-workspace
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+**/.cache/
+
+# Testing
+coverage/
+**/coverage/
+.nyc_output/
+
+# Prisma
+**/prisma/*.db
+**/prisma/*.db-journal
+**/prisma/migrations/**/*.sql
+!**/prisma/migrations/**/migration.sql
+
+# Backup files
+*.backup
+*.bak
+*.old
+
+# Compressed files (if you create backups)
+*.zip
+*.tar.gz
+*.rar

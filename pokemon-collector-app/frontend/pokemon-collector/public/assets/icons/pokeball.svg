@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <!-- Gradiente para la parte superior -->
+  <defs>
+    <linearGradient id="topGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2563eb;stop-opacity:1" />
+    </linearGradient>
+    <radialGradient id="shine" cx="35%" cy="35%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:0.4" />
+      <stop offset="100%" style="stop-color:#ffffff;stop-opacity:0" />
+    </radialGradient>
+  </defs>
+  
+  <!-- Sombra externa -->
+  <circle cx="50" cy="52" r="48" fill="#000000" opacity="0.1"/>
+  
+  <!-- Mitad superior con gradiente -->
+  <path d="M 50 0 A 50 50 0 0 1 100 50 L 65 50 A 15 15 0 0 0 35 50 L 0 50 A 50 50 0 0 1 50 0 Z" fill="url(#topGrad)"/>
+  
+  <!-- Mitad inferior -->
+  <path d="M 50 100 A 50 50 0 0 1 0 50 L 35 50 A 15 15 0 0 0 65 50 L 100 50 A 50 50 0 0 1 50 100 Z" fill="#f8fafc"/>
+  
+  <!-- Brillo superior -->
+  <ellipse cx="50" cy="20" rx="30" ry="15" fill="url(#shine)"/>
+  
+  <!-- Línea divisoria elegante -->
+  <rect x="0" y="47" width="35" height="6" fill="#1e293b" rx="1"/>
+  <rect x="65" y="47" width="35" height="6" fill="#1e293b" rx="1"/>
+  
+  <!-- Botón central - anillo exterior -->
+  <circle cx="50" cy="50" r="16" fill="#1e293b"/>
+  
+  <!-- Botón central - anillo medio -->
+  <circle cx="50" cy="50" r="13" fill="#f8fafc"/>
+  
+  <!-- Botón central - punto azul -->
+  <circle cx="50" cy="50" r="6" fill="#2563eb"/>
+  
+  <!-- Brillo en el botón -->
+  <ellipse cx="48" cy="48" rx="3" ry="2" fill="#60a5fa" opacity="0.6"/>
+  
+  <!-- Borde exterior -->
+  <circle cx="50" cy="50" r="49" fill="none" stroke="#1e293b" stroke-width="2"/>
+</svg>

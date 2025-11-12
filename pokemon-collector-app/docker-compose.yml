@@ -1,0 +1,67 @@
+services:
+  # Base de datos PostgreSQL
+  db:
+    image: postgres:16-alpine
+    container_name: pokemon-collector-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER:-pokemon_user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-pokemon_password}
+      POSTGRES_DB: ${DB_NAME:-pokemon_collector}
+    ports:
+      - "5432:5432"  # Exponer PostgreSQL para desarrollo local
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - pokemon-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-pokemon_user}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Backend API
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: pokemon-collector-backend
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://${DB_USER:-pokemon_user}:${DB_PASSWORD:-pokemon_password}@db:5432/${DB_NAME:-pokemon_collector}
+      PORT: 3001
+      NODE_ENV: production
+    # Puerto expuesto solo internamente en la red de Docker
+    expose:
+      - "3001"
+    ports:
+      - "5555:5555"  # Puerto para Prisma Studio
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - pokemon-network
+    volumes:
+      - ./backend/prisma:/app/prisma
+
+  # Frontend Angular
+  frontend:
+    build:
+      context: ./frontend/pokemon-collector
+      dockerfile: Dockerfile
+    container_name: pokemon-collector-frontend
+    restart: unless-stopped
+    ports:
+      - "8081:80"
+    depends_on:
+      - backend
+    networks:
+      - pokemon-network
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  pokemon-network:
+    driver: bridge

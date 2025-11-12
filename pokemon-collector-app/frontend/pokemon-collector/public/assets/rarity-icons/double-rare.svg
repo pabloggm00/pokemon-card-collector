@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-2 -2 44 28" width="44" height="28">
+  <!-- Primera estrella (arriba) -->
+  <path d="M9 0 L11.5 7 L19 7.5 L13 13 L15 20 L9 16 L3 20 L5 13 L-1 7.5 L6.5 7 Z" fill="#2d3748" stroke="#ffffff" stroke-width="1.5"/>
+  <!-- Segunda estrella (abajo, más junta) -->
+  <path d="M30 4 L32.5 11 L40 11.5 L34 17 L36 24 L30 20 L24 24 L26 17 L20 11.5 L27.5 11 Z" fill="#2d3748" stroke="#ffffff" stroke-width="1.5"/>
+</svg>

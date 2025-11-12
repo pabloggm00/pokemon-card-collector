@@ -1,0 +1,95 @@
+<div class="modal-overlay" (click)="onCancel()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Importar Set</h2>
+      <button class="btn-close" (click)="onCancel()">
+        <img src="assets/icons/x.svg" alt="Cerrar" class="icon-close">
+      </button>
+    </div>
+
+  <div class="modal-body">
+    <div class="search-section">
+      <div class="input-wrapper">
+        <img src="assets/icons/search.svg" alt="" class="input-icon">
+        <input
+          id="search"
+          type="text"
+          [(ngModel)]="searchTerm"
+          (ngModelChange)="filterSets()"
+          name="search"
+          placeholder="Buscar por nombre o código..."
+          class="form-input"
+          [disabled]="loadingSets"
+        >
+      </div>
+    </div>
+
+    @if (loadingSets) {
+      <div class="loading-sets">
+        <span>Cargando sets disponibles...</span>
+      </div>
+    } @else {
+      <div class="sets-list">
+        @if (filteredSets.length === 0 && searchTerm) {
+          <p class="no-results">No se encontraron sets con "{{ searchTerm }}"</p>
+        } @else {
+          @for (set of filteredSets; track set.id) {
+            <div 
+              class="set-item" 
+              [class.selected]="selectedSetIds.has(set.id)"
+              (click)="selectSet(set.id)"
+            >
+              @if (set.logo) {
+                <img [src]="set.logo" [alt]="set.name" class="set-logo">
+              }
+              <div class="set-info">
+                <h3>{{ set.name }}</h3>
+                <p class="set-details">{{ set.cardCount }} cartas • {{ set.id }}</p>
+              </div>
+              @if (selectedSetIds.has(set.id)) {
+                <div class="check-icon">✓</div>
+              }
+            </div>
+          }
+        }
+      </div>
+    }
+
+    @if (error) {
+      <div class="alert alert-error">
+        ❌ {{ error }}
+      </div>
+    }
+
+    @if (successMessage) {
+      <div class="alert alert-success">
+        {{ successMessage }}
+      </div>
+    }
+
+    <div class="form-actions">
+      <button
+        type="button"
+        class="btn btn-secondary"
+        (click)="onCancel()"
+        [disabled]="loading"
+      >
+        Cancelar
+      </button>
+      <button
+        type="button"
+        class="btn btn-primary"
+        (click)="onSubmit()"
+        [disabled]="loading || selectedSetIds.size === 0 || loadingSets"
+      >
+        @if (loading) {
+          <span>Importando ({{ completedImports }}/{{ selectedSetIds.size }})...</span>
+        } @else {
+          <img src="assets/icons/download.svg" alt="" class="btn-icon">
+          <span>Importar {{ selectedSetIds.size }} Set{{ selectedSetIds.size !== 1 ? 's' : '' }}</span>
+        }
+      </button>
+    </div>
+  </div>
+  </div>
+</div>

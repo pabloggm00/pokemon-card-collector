@@ -1,0 +1,326 @@
+@if (!loading && collection) {
+<div class="collection-detail-container">
+  <!-- Header Unificado con Filtros -->
+  <div class="header-unified">
+    <!-- Primera fila: Título y acciones -->
+    <div class="header-top">
+      <h1>{{ collection.name }}</h1>
+      <div class="header-actions">
+        @if (isCustomCollection()) { @if (!selectionMode) {
+        <button class="btn-add-cards" (click)="openAddCardsModal()">
+          <img src="assets/icons/plus.svg" alt="" class="btn-icon" />
+          Añadir cartas
+        </button>
+        <button class="btn-select" (click)="toggleSelectionMode()">
+          Seleccionar
+        </button>
+        } @else {
+        <button class="btn-select-all" (click)="toggleSelectAll()">
+          {{
+            selectedCardIds.size === filteredCards.length
+              ? "Deseleccionar todas"
+              : "Seleccionar todas"
+          }}
+        </button>
+        <button
+          class="btn-delete-multiple"
+          (click)="removeSelectedCards()"
+          [disabled]="selectedCardIds.size === 0"
+        >
+          <img src="assets/icons/trash.svg" alt="" class="action-icon" />
+          Eliminar
+          {{ selectedCardIds.size > 0 ? "(" + selectedCardIds.size + ")" : "" }}
+        </button>
+        <button class="btn-cancel" (click)="toggleSelectionMode()">
+          Cancelar
+        </button>
+        } }
+        <div class="stats-compact">
+          <span class="stat-item">
+            <strong>{{ ownedCards }}</strong> / {{ totalCards }} cartas
+          </span>
+          <span class="stat-item completion">
+            <strong>{{ getCompletionPercentage() }}%</strong> completado
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tercera fila: Filtros -->
+    <div class="header-filters">
+      <div class="filters-row">
+        <select
+          [(ngModel)]="filterType"
+          (change)="onTypeFilter()"
+          class="filter-select"
+        >
+          <option value="">Todos los tipos</option>
+          <option value="POKEMON">Pokémon</option>
+          <option value="TRAINER">Entrenador</option>
+          <option value="ENERGY">Energía</option>
+        </select>
+
+        @if (filterType === 'POKEMON') {
+        <select
+          [(ngModel)]="filterPokemonType"
+          (change)="applyFilters()"
+          class="filter-select"
+        >
+          <option value="">Todos los tipos de Pokémon</option>
+          @for (type of pokemonTypes; track type.code) {
+          <option [value]="type.code">{{ type.name }}</option>
+          }
+        </select>
+        }
+
+        <select
+          [(ngModel)]="filterRarity"
+          (change)="onRarityFilter()"
+          class="filter-select"
+        >
+          <option value="">Todas las rarezas</option>
+          @for (rarity of availableRarities; track rarity.code) {
+          <option [value]="rarity.code">{{ rarity.name }}</option>
+          }
+        </select>
+
+        <select
+          [(ngModel)]="sortOption"
+          (change)="applyFilters()"
+          class="filter-select"
+        >
+          <option value="number-asc">Número (1 → 999)</option>
+          <option value="number-desc">Número (999 → 1)</option>
+          <option value="name-asc">Nombre (A → Z)</option>
+          <option value="name-desc">Nombre (Z → A)</option>
+          <option value="rarity-asc">Rareza (menor → mayor)</option>
+          <option value="rarity-desc">Rareza (mayor → menor)</option>
+        </select>
+
+        <div class="filter-toggles">
+          <label class="toggle-preview">
+            <input
+              type="checkbox"
+              [(ngModel)]="showOnlyOwned"
+              (ngModelChange)="applyFilters()"
+              class="toggle-checkbox"
+            />
+            <span class="toggle-label">Tengo</span>
+          </label>
+
+          <label class="toggle-preview">
+            <input
+              type="checkbox"
+              [(ngModel)]="showOnlyMissing"
+              (ngModelChange)="applyFilters()"
+              class="toggle-checkbox"
+            />
+            <span class="toggle-label">Faltan</span>
+          </label>
+
+          <label class="toggle-preview">
+            <input
+              type="checkbox"
+              [(ngModel)]="showPreview"
+              (ngModelChange)="onPreviewToggle()"
+              class="toggle-checkbox"
+            />
+            <span class="toggle-label">Preview</span>
+          </label>
+        </div>
+
+        <button (click)="clearFilters()" class="btn-clear">Limpiar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cards Grid Directo -->
+  <div class="cards-grid" [class.selection-mode]="selectionMode">
+    @for (collectionCard of filteredCards; track collectionCard.id) {
+    <div
+      class="card"
+      [class.owned]="collectionCard.quantity > 0"
+      [class.selected]="selectionMode && isCardSelected(collectionCard.card.id)"
+      (click)="
+        selectionMode && isCustomCollection()
+          ? toggleCardSelection(collectionCard.card.id)
+          : null
+      "
+    >
+      <!-- Card Image -->
+      <div
+        class="card-image-container"
+        [class.preview-enabled]="showPreview"
+        [style.--hover-image]="getCollectionCardHoverImage(collectionCard)"
+      >
+        <img
+          [src]="getCollectionCardImage(collectionCard)"
+          [alt]="collectionCard.card.name"
+          class="card-image"
+          loading="lazy"
+        />
+      </div>
+
+      <!-- Card Info -->
+      <div class="card-info">
+        <div class="card-info-top">
+          <h3>{{ collectionCard.card.name }}</h3>
+
+          <div class="card-meta">
+            @if (isCustomCollection() && collectionCard.card.set) {
+            <div class="card-set">
+              @if (collectionCard.card.set.symbolUrl) {
+              <img
+                [src]="collectionCard.card.set.symbolUrl"
+                [alt]="collectionCard.card.set.name"
+                class="set-symbol"
+                [title]="collectionCard.card.set.name"
+              />
+              }
+              <span class="set-name">{{ collectionCard.card.set.name }}</span>
+            </div>
+            }
+
+            <div class="card-number">
+              @if (!isCustomCollection() && collectionCard.card.set &&
+              collectionCard.card.set.symbolUrl) {
+              <img
+                [src]="collectionCard.card.set.symbolUrl"
+                [alt]="collectionCard.card.set.name"
+                class="set-symbol"
+                [title]="collectionCard.card.set.name"
+              />
+              }
+              <span class="card-num"
+                >N° {{ collectionCard.card.number | cardNumber }}</span
+              >
+            </div>
+
+            <!-- Rarity -->
+            @if (collectionCard.card.rarity) {
+            <div class="card-rarity">
+              <!-- <img
+                class="rarity-icon"
+                [src]="getRarityIconPath(collectionCard.card.rarity.code)"
+                [alt]="collectionCard.card.rarity.name"
+                [title]="collectionCard.card.rarity.name"
+              /> -->
+              <span class="rarity-name">{{
+                collectionCard.card.rarity.name
+              }}</span>
+            </div>
+            }
+          </div>
+        </div>
+
+        <!-- Checkboxes for card variants (ocultar en modo selección) -->
+        @if (!selectionMode) {
+        <div class="card-versions">
+          @if (hasVariant(collectionCard.card, 'normal')) {
+          <label class="version-checkbox" title="Normal">
+            <input
+              type="checkbox"
+              class="checkbox-normal"
+              [class.rarity-C]="collectionCard.card.rarity?.code === 'C'"
+              [class.rarity-UC]="collectionCard.card.rarity?.code === 'UC'"
+              [class.rarity-R]="collectionCard.card.rarity?.code === 'R'"
+              [class.rarity-DOUBLERARE]="
+                collectionCard.card.rarity?.code === 'DOUBLERARE'
+              "
+              [class.rarity-UR]="collectionCard.card.rarity?.code === 'UR'"
+              [class.rarity-ILLUSTRATI]="
+                collectionCard.card.rarity?.code === 'ILLUSTRATI'
+              "
+              [class.rarity-SPECIALILL]="
+                collectionCard.card.rarity?.code === 'SPECIALILL'
+              "
+              [class.rarity-HYPERRARE]="
+                collectionCard.card.rarity?.code === 'HYPERRARE'
+              "
+              [checked]="isVersionChecked(collectionCard, 'normal')"
+              (change)="toggleCardVersion(collectionCard, 'normal')"
+            />
+          </label>
+          } @if (hasVariant(collectionCard.card, 'holo')) {
+          <label class="version-checkbox" title="Holofoil">
+            <input
+              type="checkbox"
+              class="checkbox-holo"
+              [checked]="isVersionChecked(collectionCard, 'holo')"
+              (change)="toggleCardVersion(collectionCard, 'holo')"
+            />
+          </label>
+          } @if (hasVariant(collectionCard.card, 'reverse')) {
+          <label class="version-checkbox" title="Reverse Holo">
+            <input
+              type="checkbox"
+              class="checkbox-reverse"
+              [checked]="isVersionChecked(collectionCard, 'reverse')"
+              (change)="toggleCardVersion(collectionCard, 'reverse')"
+            />
+          </label>
+          } @if (hasVariant(collectionCard.card, 'firstEdition')) {
+          <label class="version-checkbox" title="First Edition">
+            <input
+              type="checkbox"
+              class="checkbox-first-edition"
+              [checked]="isVersionChecked(collectionCard, 'firstEdition')"
+              (change)="toggleCardVersion(collectionCard, 'firstEdition')"
+            />
+          </label>
+          }
+        </div>
+        }
+      </div>
+
+      <!-- Remove card button (only for custom collections, hide in selection mode) -->
+      @if (isCustomCollection() && !selectionMode) {
+      <button
+        class="btn-remove-card"
+        (click)="removeCardFromCollection(collectionCard.cardId)"
+        title="Eliminar carta de la colección"
+      >
+        <img src="assets/icons/x.svg" alt="" class="action-icon" />
+      </button>
+      }
+    </div>
+    }
+  </div>
+
+  @if (filteredCards.length === 0 && !loading) {
+  <div class="no-data">
+    <p>No se encontraron cartas con los filtros seleccionados.</p>
+    <button class="btn-clear" (click)="clearFilters()">Limpiar filtros</button>
+  </div>
+  }
+</div>
+
+<!-- Add Cards Modal -->
+@if (showAddCardsModal) {
+<app-add-cards-modal
+  (cancel)="closeAddCardsModal()"
+  (success)="onCardsAdded($event)"
+/>
+}
+
+<!-- Confirmation Modal -->
+@if (showConfirmModal) {
+<app-confirmation-modal
+  [title]="confirmModalTitle"
+  [message]="confirmModalMessage"
+  [type]="confirmModalType"
+  [confirmText]="'Eliminar'"
+  [cancelText]="'Cancelar'"
+  (confirm)="onConfirmAction()"
+  (cancel)="onCancelAction()"
+>
+</app-confirmation-modal>
+} }
+
+<!-- Loading State -->
+@if (loading) {
+<div class="loading">
+  <div class="spinner"></div>
+  <p>Cargando colección...</p>
+</div>
+}

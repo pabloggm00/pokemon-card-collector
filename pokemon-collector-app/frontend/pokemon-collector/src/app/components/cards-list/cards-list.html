@@ -1,0 +1,211 @@
+<div class="cards-container">
+  <!-- Filtros -->
+  <div class="filters">
+    <!-- Fila 1: Búsqueda y Preview -->
+    <div class="filter-row">
+      <div class="search-wrapper">
+        <img src="assets/icons/search.svg" alt="" class="search-icon" />
+        <input
+          type="text"
+          [(ngModel)]="searchTerm"
+          (input)="onSearchInput($any($event.target).value)"
+          placeholder="Buscar por nombre..."
+          class="search-input"
+        />
+      </div>
+
+      <label class="toggle-preview">
+        <input
+          type="checkbox"
+          [(ngModel)]="showPreview"
+          (ngModelChange)="onPreviewToggle()"
+          class="toggle-checkbox"
+        />
+        <span class="toggle-label">Preview</span>
+      </label>
+    </div>
+
+    <!-- Fila 2: Selectores de filtros -->
+    <div class="filter-row">
+      <select
+        [(ngModel)]="selectedSet"
+        (change)="onSetFilter()"
+        class="filter-select"
+      >
+        <option value="">Todos los sets</option>
+        @for (set of sets; track set.id) {
+        <option [value]="set.id">{{ set.name }}</option>
+        }
+      </select>
+
+      <select
+        [(ngModel)]="selectedCardType"
+        (change)="onCardTypeFilter()"
+        class="filter-select"
+      >
+        <option value="">Tipo de carta</option>
+        <option value="POKEMON">Pokémon</option>
+        <option value="TRAINER">Entrenador</option>
+        <option value="ENERGY">Energía</option>
+      </select>
+
+      @if (selectedCardType === 'POKEMON') {
+      <select
+        [(ngModel)]="selectedPokemonType"
+        (change)="onPokemonTypeFilter()"
+        class="filter-select"
+      >
+        <option value="">Tipo de Pokémon</option>
+        @for (type of pokemonTypes; track type.code) {
+        <option [value]="type.code">{{ type.name }}</option>
+        }
+      </select>
+      }
+
+      <select
+        [(ngModel)]="selectedRarity"
+        (change)="onRarityFilter()"
+        class="filter-select"
+      >
+        <option value="">Todas las rarezas</option>
+        @for (rarity of rarities; track rarity.id) {
+        <option [value]="rarity.id">{{ rarity.name }}</option>
+        }
+      </select>
+
+      <button (click)="clearFilters()" class="btn-clear">
+        Limpiar filtros
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  @if (loading) {
+  <div class="loading">
+    <p>Cargando cartas...</p>
+  </div>
+  }
+
+  <!-- Error -->
+  @if (error) {
+  <div class="error">
+    <p>{{ error }}</p>
+    <button (click)="loadCards()">Reintentar</button>
+  </div>
+  }
+
+  <!-- Cards Grid -->
+  @if (loading) {
+  <!-- Skeleton loading -->
+  <div class="cards-content">
+    <div class="cards-info">
+      <p class="skeleton-text skeleton-text-short"></p>
+      <p class="skeleton-text skeleton-text-short"></p>
+    </div>
+
+    <div class="cards-grid">
+      @for (item of [].constructor(limit); track $index) {
+      <div class="card skeleton-card">
+        <div class="skeleton-image"></div>
+        <div class="card-info">
+          <div class="skeleton-text skeleton-text-long"></div>
+          <div class="skeleton-text skeleton-text-medium"></div>
+          <div class="skeleton-text skeleton-text-short"></div>
+        </div>
+      </div>
+      }
+    </div>
+  </div>
+  } @else if (!loading && !error) {
+  <div class="cards-content">
+    <div class="cards-info">
+      <p>Mostrando {{ cards.length }} de {{ total }} cartas</p>
+      <p>Página {{ currentPage }} de {{ totalPages }}</p>
+    </div>
+
+    <div class="cards-grid">
+      @for (card of cards; track card.id) {
+      <div class="card">
+        <div
+          class="card-image-container"
+          [class.preview-enabled]="showPreview"
+          [style.--hover-image]="getHoverImage(card)"
+        >
+          <img
+            [src]="getCardImage(card)"
+            [alt]="card.name"
+            class="card-image"
+            loading="lazy"
+          />
+        </div>
+
+        <div class="card-info">
+          <h3>{{ card.name | cardName }}</h3>
+          <p class="card-number">
+            @if (card.set && card.set.symbolUrl) {
+            <img
+              [src]="card.set.symbolUrl"
+              [alt]="card.set.name"
+              class="set-symbol"
+              [title]="card.set.name"
+            />
+            } N° {{ card.number | cardNumber }}
+          </p>
+          @if (card.rarity) {
+          <p class="card-rarity">
+            <!-- <img 
+                class="rarity-icon"
+                [src]="getRarityIconPath(card.rarity.code)"
+                [alt]="card.rarity.name"
+                [title]="card.rarity.name"
+                (error)="onIconError($event, card.rarity.code)"
+              /> -->
+            <span class="rarity-name">{{ card.rarity.name }}</span>
+          </p>
+          } @if (card.artist) {
+          <p class="card-artist">Artista: {{ card.artist }}</p>
+          }
+        </div>
+      </div>
+      }
+    </div>
+
+    <!-- Pagination -->
+    @if (totalPages > 1) {
+    <div class="pagination">
+      <button
+        (click)="previousPage()"
+        [disabled]="currentPage === 1"
+        class="btn-page"
+      >
+        ← Anterior
+      </button>
+
+      <div class="page-numbers">
+        @for (page of getVisiblePages(); track $index) { @if (page === -1) {
+        <span class="page-dots">...</span>
+        } @else {
+        <button
+          (click)="goToPage(page)"
+          [class.active]="currentPage === page"
+          class="btn-page-number"
+        >
+          {{ page }}
+        </button>
+        } }
+      </div>
+
+      <button (click)="nextPage()" [disabled]="!hasMore" class="btn-page">
+        Siguiente →
+      </button>
+    </div>
+    }
+  </div>
+
+  <!-- No data -->
+  @if (!loading && !error && cards.length === 0) {
+  <div class="no-data">
+    <p>No se encontraron cartas con los filtros aplicados</p>
+  </div>
+  } }
+</div>

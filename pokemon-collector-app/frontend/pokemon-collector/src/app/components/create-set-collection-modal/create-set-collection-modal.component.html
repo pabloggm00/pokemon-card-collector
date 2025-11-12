@@ -1,0 +1,83 @@
+<div class="modal-overlay" (click)="onCancel()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Crear colecciones desde Sets</h2>
+      <button class="btn-close" (click)="onCancel()">
+        <img src="assets/icons/x.svg" alt="Cerrar" class="icon-close">
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <div class="search-section">
+        <div class="input-wrapper">
+          <img src="assets/icons/search.svg" alt="" class="input-icon">
+          <input
+            type="text"
+            [(ngModel)]="searchTerm"
+            (ngModelChange)="filterSets()"
+            name="search"
+            placeholder="Buscar por nombre o código..."
+            class="form-input"
+          >
+        </div>
+        @if (selectedSetIds.size > 0) {
+          <p class="selection-info">{{ selectedSetIds.size }} set(s) seleccionado(s)</p>
+        }
+      </div>
+
+      <div class="sets-list">
+        @if (filteredSets.length === 0 && searchTerm) {
+          <p class="no-results">No se encontraron sets con "{{ searchTerm }}"</p>
+        } @else {
+          @for (set of filteredSets; track set.id) {
+            <div 
+              class="set-item" 
+              [class.selected]="isSetSelected(set.id)"
+              (click)="toggleSetSelection(set.id)"
+            >
+              @if (set.logoUrl) {
+                <img [src]="set.logoUrl" [alt]="set.name" class="set-logo">
+              }
+              <div class="set-info">
+                <h3>{{ set.name }}</h3>
+                <p class="set-details">{{ set.totalCards }} cartas • {{ set.code }}</p>
+              </div>
+              @if (isSetSelected(set.id)) {
+                <div class="check-icon">✓</div>
+              }
+            </div>
+          }
+        }
+      </div>
+
+      @if (error) {
+        <div class="error-message">
+          {{ error }}
+        </div>
+      }
+
+      <div class="form-actions">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="onCancel()"
+          [disabled]="loading"
+        >
+          Cancelar
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="onSubmit()"
+          [disabled]="!isValid() || loading"
+        >
+          @if (loading) {
+            <span>Creando...</span>
+          } @else {
+            <span>Crear {{ selectedSetIds.size }} Set{{ selectedSetIds.size !== 1 ? 's' : '' }}</span>
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

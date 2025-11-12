@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-2 -2 60 28" width="60" height="28">
+  <defs>
+    <linearGradient id="goldGradient3" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffd700;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#ffed4e;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ffa500;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <!-- Primera estrella dorada (izquierda, abajo) -->
+  <path d="M8 6 L10.5 13 L18 13.5 L12 19 L14 26 L8 22 L2 26 L4 19 L-2 13.5 L5.5 13 Z" fill="url(#goldGradient3)" stroke="#ffa500" stroke-width="1.5"/>
+  <!-- Segunda estrella dorada (centro, arriba) -->
+  <path d="M28 -2 L30.5 5 L38 5.5 L32 11 L34 18 L28 14 L22 18 L24 11 L18 5.5 L25.5 5 Z" fill="url(#goldGradient3)" stroke="#ffa500" stroke-width="1.5"/>
+  <!-- Tercera estrella dorada (derecha, abajo) -->
+  <path d="M48 6 L50.5 13 L58 13.5 L52 19 L54 26 L48 22 L42 26 L44 19 L38 13.5 L45.5 13 Z" fill="url(#goldGradient3)" stroke="#ffa500" stroke-width="1.5"/>
+</svg>

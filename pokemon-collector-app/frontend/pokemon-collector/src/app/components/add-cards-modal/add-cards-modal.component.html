@@ -1,0 +1,84 @@
+<div class="modal-overlay" (click)="onCancel()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Añadir cartas a la colección</h2>
+      <button class="btn-close" (click)="onCancel()">
+        <img src="assets/icons/x.svg" alt="Cerrar" class="icon-close">
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <div class="search-section">
+        <div class="input-wrapper">
+          <img src="assets/icons/search.svg" alt="" class="input-icon">
+          <input
+            type="text"
+            [(ngModel)]="searchTerm"
+            (ngModelChange)="filterCards()"
+            name="search"
+            placeholder="Buscar por nombre, número o set..."
+            class="form-input"
+          >
+        </div>
+      </div>
+
+      @if (loading) {
+        <div class="loading-cards">
+          <span>Cargando cartas disponibles...</span>
+        </div>
+      } @else {
+        <div class="cards-list">
+          @if (filteredCards.length === 0 && searchTerm) {
+            <p class="no-results">No se encontraron cartas con "{{ searchTerm }}"</p>
+          } @else {
+            @for (card of filteredCards; track card.id) {
+              <div 
+                class="card-item" 
+                [class.selected]="selectedCardIds.has(card.id)"
+                (click)="toggleCard(card.id)"
+              >
+                @if (card.imageUrl) {
+                  <img [src]="card.imageUrl" [alt]="card.name" class="card-image">
+                }
+                <div class="card-info">
+                  <h3>{{ card.name }}</h3>
+                  <p class="card-details">
+                    {{ card.set?.name }} • #{{ card.number | cardNumber }}
+                  </p>
+                </div>
+                @if (selectedCardIds.has(card.id)) {
+                  <div class="check-icon">✓</div>
+                }
+              </div>
+            }
+          }
+        </div>
+      }
+
+      @if (error) {
+        <div class="error-message">
+          {{ error }}
+        </div>
+      }
+
+      <div class="form-actions">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="onCancel()"
+          [disabled]="loading"
+        >
+          Cancelar
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="onSubmit()"
+          [disabled]="!isValid() || loading"
+        >
+          Añadir {{ selectedCardIds.size }} carta{{ selectedCardIds.size !== 1 ? 's' : '' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

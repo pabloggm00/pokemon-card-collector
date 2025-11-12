@@ -1,0 +1,136 @@
+/* Global Styles - Dark Elegant Theme */
+
+@font-face {
+  font-family: 'Pokemon Hollow';
+  src: url('/fonts/pokemonhollow.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --bg-primary: #0a0e27;
+  --bg-secondary: #141b2d;
+  --bg-tertiary: #1e2139;
+  --bg-card: #1a1f3a;
+  --accent-primary: #6366f1;
+  --accent-secondary: #818cf8;
+  --accent-gold: #d97706;
+  --text-primary: #e5e7eb;
+  --text-secondary: #9ca3af;
+  --text-muted: #6b7280;
+  --border-color: #2d3250;
+  --success: #10b981;
+  --error: #ef4444;
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+ul, ol {
+  list-style: none;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.2s ease;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* Elegant Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--accent-primary);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-secondary);
+}
+
+/* Selection */
+::selection {
+  background: var(--accent-primary);
+  color: white;
+}
+
+/* ============================================
+   RARITY STYLES - Shared across all components
+   ============================================ */
+
+.card-rarity {
+  margin: 6px 0;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  line-height: 1;
+}
+
+.rarity-symbol {
+  font-size: 1.125rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  font-weight: 900;
+  letter-spacing: -2px;
+  flex-shrink: 0;
+  /* Borde/contorno reforzado para símbolos oscuros */
+  text-shadow: 
+    -1px -1px 0 rgba(255, 255, 255, 0.5),
+    1px -1px 0 rgba(255, 255, 255, 0.5),
+    -1px 1px 0 rgba(255, 255, 255, 0.5),
+    1px 1px 0 rgba(255, 255, 255, 0.5),
+    -2px -2px 0 rgba(255, 255, 255, 0.3),
+    2px -2px 0 rgba(255, 255, 255, 0.3),
+    -2px 2px 0 rgba(255, 255, 255, 0.3),
+    2px 2px 0 rgba(255, 255, 255, 0.3),
+    0 0 6px rgba(0, 0, 0, 0.6);
+  filter: brightness(1.1);
+}
+
+/* Icono SVG de rareza */
+.rarity-icon {
+  width: auto;
+  height: 16px;
+  max-width: 48px;
+  display: inline-block;
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+
+.rarity-name {
+  color: var(--text-primary);
+  font-weight: 500;
+  line-height: 1;
+}

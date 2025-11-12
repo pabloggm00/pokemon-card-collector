@@ -1,0 +1,174 @@
+<div class="collections-container">
+  @if (!loading && collections.length > 0) {
+    <div class="header">
+      <div class="search-container">
+        <img src="assets/icons/search.svg" alt="Buscar" class="search-icon">
+        <input 
+          type="text" 
+          placeholder="Buscar colecciones..." 
+          class="search-input"
+          (input)="onSearchInput($any($event.target).value)"
+        >
+      </div>
+      <div class="header-buttons">
+        @if (!selectionMode) {
+          <button class="btn-create btn-set" (click)="openSetModal()">
+            <img src="assets/icons/plus.svg" alt="" class="btn-icon">
+            Colección de Set
+          </button>
+          <button class="btn-create btn-custom" (click)="openCustomModal()">
+            <img src="assets/icons/plus.svg" alt="" class="btn-icon">
+            Colección Personalizada
+          </button>
+          <button class="btn-select" (click)="toggleSelectionMode()">
+            Seleccionar
+          </button>
+        } @else {
+          <button class="btn-select-all" (click)="toggleSelectAll()">
+            {{ selectedCollectionIds.size === filteredCollections.length ? 'Deseleccionar todas' : 'Seleccionar todas' }}
+          </button>
+          <button class="btn-delete-multiple" (click)="deleteSelected()" [disabled]="selectedCollectionIds.size === 0">
+            <img src="assets/icons/trash.svg" alt="" class="btn-icon">
+            Eliminar {{ selectedCollectionIds.size > 0 ? '(' + selectedCollectionIds.size + ')' : '' }}
+          </button>
+          <button class="btn-cancel" (click)="toggleSelectionMode()">
+            Cancelar
+          </button>
+        }
+      </div>
+    </div>
+  }
+
+  @if (loading) {
+    <div class="loading">
+      <div class="spinner"></div>
+      <p>Cargando colecciones...</p>
+    </div>
+  }
+
+  @if (!loading && collections.length === 0) {
+    <div class="empty-state">
+      <div class="empty-icon">
+        <img src="assets/icons/book.svg" alt="" class="empty-icon-img">
+      </div>
+      <h2>No tienes colecciones todavía</h2>
+      <p>Crea tu primera colección para empezar a trackear tus cartas</p>
+      <div class="empty-buttons">
+        <button class="btn-create-large btn-set" (click)="openSetModal()">
+          Colección de Set
+        </button>
+        <button class="btn-create-large btn-custom" (click)="openCustomModal()">
+          Colección Personalizada
+        </button>
+      </div>
+    </div>
+  }
+
+  @if (!loading && collections.length > 0) {
+    <div class="collections-grid">
+      @for (collection of filteredCollections; track collection.id) {
+        <div 
+          class="collection-card"
+          [class.set-collection]="collection.type === 'SET'"
+          [class.selected]="selectionMode && isSelected(collection.id)"
+          (click)="openCollection(collection.id)"
+        >
+          <!-- Checkbox para modo selección -->
+          @if (selectionMode) {
+            <div class="selection-checkbox" (click)="toggleSelection(collection.id); $event.stopPropagation()">
+              <input 
+                type="checkbox" 
+                [checked]="isSelected(collection.id)"
+                (click)="$event.stopPropagation()"
+              >
+            </div>
+          }
+
+          <!-- Logo para colecciones originales (SET) -->
+          @if (collection.type === 'SET' && collection.set && collection.set.logoUrl) {
+            <div class="collection-logo">
+              <img [src]="collection.set.logoUrl" [alt]="collection.set.name">
+            </div>
+          }
+
+          <!-- Logo para colecciones personalizadas -->
+          @if (collection.type === 'CUSTOM') {
+            <div class="collection-logo custom-logo" [style.background]="getCollectionColor(collection.name)">
+              <span class="logo-text">{{ getLogoText(collection.name) }}</span>
+            </div>
+          }
+
+          <div class="collection-header">
+            <div class="title-section">
+              @if (collection.set) {
+                <div class="set-info">
+                  <span class="set-badge">{{ collection.set.code }}</span>
+                  <h3>{{ collection.set.name }}</h3>
+                </div>
+              } @else {
+                <h3>{{ collection.name }}</h3>
+              }
+            </div>
+            @if (!selectionMode) {
+              <button 
+                class="btn-delete" 
+                (click)="deleteCollection(collection, $event)"
+                title="Eliminar colección"
+              >
+                <img src="assets/icons/trash.svg" alt="" class="icon-delete">
+              </button>
+            }
+          </div>
+
+          <div class="collection-stats">
+            <div class="stat-main">
+              <span class="stat-value-large">{{ collection.ownedCards }}</span>
+              <span class="stat-separator">/</span>
+              <span class="stat-total">{{ collection.totalCards }}</span>
+            </div>
+            
+            <div class="progress-bar">
+              <div 
+                class="progress-fill" 
+                [style.width.%]="getCompletionPercentage(collection)"
+              ></div>
+            </div>
+            
+            <div class="percentage">
+              {{ getCompletionPercentage(collection) }}% completado
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>
+
+<!-- Modal para crear colección desde Set -->
+@if (showSetModal) {
+  <app-create-set-collection-modal
+    (success)="onCollectionCreated()"
+    (cancel)="closeSetModal()">
+  </app-create-set-collection-modal>
+}
+
+<!-- Modal para crear colección personalizada -->
+@if (showCustomModal) {
+  <app-create-custom-collection-modal
+    (success)="onCollectionCreated()"
+    (cancel)="closeCustomModal()">
+  </app-create-custom-collection-modal>
+}
+
+<!-- Modal de confirmación -->
+@if (showConfirmModal) {
+  <app-confirmation-modal
+    [title]="confirmModalTitle"
+    [message]="confirmModalMessage"
+    [type]="confirmModalType"
+    [confirmText]="'Eliminar'"
+    [cancelText]="'Cancelar'"
+    (confirm)="onConfirmAction()"
+    (cancel)="onCancelAction()">
+  </app-confirmation-modal>
+}

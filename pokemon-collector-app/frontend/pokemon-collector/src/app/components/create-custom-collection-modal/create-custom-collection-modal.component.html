@@ -1,0 +1,114 @@
+<div class="modal-overlay" [class.loading]="loading">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Crear colección personalizada</h2>
+    </div>
+
+    <form (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="collectionName">Nombre de la colección</label>
+        <input 
+          type="text" 
+          id="collectionName"
+          class="form-control"
+          [(ngModel)]="collectionName"
+          name="collectionName"
+          required
+          placeholder="Introduce un nombre para tu colección">
+      </div>
+
+      <div class="form-group">
+        <div 
+          class="checkbox-custom" 
+          [class.checked]="useTemplate"
+          [class.disabled]="loading"
+          (click)="!loading && (useTemplate = !useTemplate)">
+          <div class="checkbox-box">
+            @if (useTemplate) {
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                <path d="M2 7L6 11L12 3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            }
+          </div>
+          <span>Usar plantilla de set(s)</span>
+        </div>
+        <p class="helper-text">Las cartas de los sets seleccionados se añadirán automáticamente a la colección</p>
+      </div>
+
+      @if (useTemplate) {
+        <div class="template-section">
+          <div class="search-section">
+            <div class="input-wrapper">
+              <img src="assets/icons/search.svg" alt="" class="input-icon">
+              <input
+                type="text"
+                [(ngModel)]="searchTerm"
+                (ngModelChange)="filterSets()"
+                name="search"
+                placeholder="Buscar sets..."
+                class="form-input"
+                [disabled]="loadingSets"
+              >
+            </div>
+            @if (selectedSetIds.size > 0) {
+              <p class="selection-info">{{ selectedSetIds.size }} set(s) seleccionado(s)</p>
+            }
+          </div>
+
+          @if (loadingSets) {
+            <div class="loading-sets">
+              <span>Cargando sets...</span>
+            </div>
+          } @else {
+            <div class="sets-list">
+              @if (filteredSets.length === 0 && searchTerm) {
+                <p class="no-results">No se encontraron sets con "{{ searchTerm }}"</p>
+              } @else {
+                @for (set of filteredSets; track set.id) {
+                  <div 
+                    class="set-item" 
+                    [class.selected]="isSetSelected(set.id)"
+                    (click)="toggleSetSelection(set.id)"
+                  >
+                    @if (set.logoUrl) {
+                      <img [src]="set.logoUrl" [alt]="set.name" class="set-logo">
+                    }
+                    <div class="set-info">
+                      <h3>{{ set.name }}</h3>
+                      <p class="set-details">{{ set.totalCards }} cartas • {{ set.code }}</p>
+                    </div>
+                    @if (isSetSelected(set.id)) {
+                      <div class="check-icon">✓</div>
+                    }
+                  </div>
+                }
+              }
+            </div>
+          }
+        </div>
+      }
+
+      @if (error) {
+        <div class="error-message">
+          {{ error }}
+        </div>
+      }
+
+      <div class="buttons">
+        <button 
+          type="button" 
+          class="btn btn-secondary"
+          (click)="onCancel()"
+          [disabled]="loading">
+          Cancelar
+        </button>
+        <button 
+          type="submit" 
+          class="btn btn-primary"
+          [disabled]="!isValid() || loading">
+          {{ loading ? 'Creando...' : 'Crear colección' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
