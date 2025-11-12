@@ -8,7 +8,7 @@ Aun así, es totalmente funcional para gestionar colecciones de forma sencilla.
 
 ![Pokemon Card Collector](https://img.shields.io/badge/Estado-Funcional-brightgreen) ![Docker](https://img.shields.io/badge/Docker-Compatible-blue) ![License](https://img.shields.io/badge/Licencia-MIT-yellow)
 
-<img width="800" alt="Pantalla sets de Pokemon Card Collector" src="https://github.com/user-attachments/assets/260e85c6-93b8-4c77-a3fc-c360c2a54877" />
+<img width="800" alt="Captura de pantalla sets" src="https://github.com/user-attachments/assets/110f6bd2-5926-4a24-8ecc-7b2bdc42f9d7" />
 
 ---
 
