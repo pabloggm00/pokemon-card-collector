@@ -916,6 +916,7 @@
     min-width: 0;
     font-size: 0.8125rem;
     padding: 8px 12px;
+    justify-content: center;
   }
 
   .filters-row {
