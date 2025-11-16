@@ -45,7 +45,7 @@
 .main-nav {
   display: flex;
   gap: 8px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap; /* Evitar wrap - los iconos se mostrarán en una fila */
 }
 
 .main-nav a {
@@ -121,25 +121,100 @@
 }
 
 /* Responsive */
+@media (max-width: 906px) and (min-width: 769px) {
+  /* Solo iconos en tablets/pantallas intermedias */
+  .main-nav a {
+    padding: 8px 12px;
+    font-size: 0;
+  }
+
+  .main-nav a .nav-icon {
+    width: 24px;
+    height: 24px;
+  }
+}
+
 @media (max-width: 768px) {
+  .app-container {
+    padding-bottom: 70px; /* Espacio para el bottom nav */
+  }
+
+  .app-header {
+    position: relative; /* Quitar sticky en móvil */
+  }
+
   .header-content {
     flex-direction: column;
     padding: 16px;
+    gap: 12px;
   }
 
   .app-title {
     font-size: 1.5rem;
   }
 
+  /* Ocultar navegación del header en móvil */
   .main-nav {
-    width: 100%;
-    justify-content: center;
+    display: none;
+  }
+
+  /* Bottom Navigation para móviles */
+  .main-nav {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--bg-secondary);
+    border-top: 1px solid var(--border-color);
+    padding: 8px 0;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    justify-content: space-around;
+    gap: 0;
   }
 
   .main-nav a {
     flex: 1;
-    text-align: center;
-    padding: 10px 12px;
-    font-size: 0.875rem;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 8px 4px;
+    gap: 4px;
+    font-size: 0.75rem;
+    border-radius: 0;
+    border: none;
+    background: transparent;
+  }
+
+  .main-nav a .nav-icon {
+    width: 24px;
+    height: 24px;
+  }
+
+  .main-nav a:hover {
+    background: rgba(59, 130, 246, 0.1);
+  }
+
+  .main-nav a.active {
+    background: transparent;
+    color: var(--accent-primary);
+    border: none;
+  }
+
+  .app-footer {
+    padding: 16px;
+    font-size: 0.8125rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .main-nav a {
+    font-size: 0.7rem;
+  }
+
+  .main-nav a .nav-icon {
+    width: 22px;
+    height: 22px;
   }
 }
