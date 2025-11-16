@@ -191,8 +191,8 @@
   display: flex;
   align-items: center;
   gap: 16px;
-  min-width: 500px;
   justify-content: flex-end;
+  flex-wrap: wrap;
 }
 
 .btn-add-cards {
@@ -869,31 +869,23 @@
   }
 
   .header-top {
-    flex-wrap: wrap;
+    flex-direction: column;
     gap: 12px;
+    align-items: stretch;
   }
 
   .header-top h1 {
     font-size: 1.25rem;
-    flex: 1 1 100%;
-    min-width: 0;
-  }
-
-  .header-actions {
-    flex-wrap: wrap;
-    gap: 8px;
     width: 100%;
-    min-width: auto;
   }
 
-  .header-actions button {
-    flex: 1;
-    min-width: 110px;
-    font-size: 0.8125rem;
-    padding: 8px 12px;
+  .header-top .toggle-preview {
+    margin-left: 0;
+    width: 100%;
+    justify-content: center;
   }
 
-  .stats-compact {
+  .btn-back {
     width: 100%;
     justify-content: center;
   }
@@ -901,7 +893,29 @@
   .header-info {
     flex-direction: column;
     align-items: flex-start;
+    gap: 12px;
+  }
+
+  .set-info {
+    width: 100%;
+  }
+
+  .stats-compact {
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: space-around;
+  }
+
+  .header-actions {
+    width: 100%;
     gap: 8px;
+  }
+
+  .header-actions button {
+    flex: 1;
+    min-width: 0;
+    font-size: 0.8125rem;
+    padding: 8px 12px;
   }
 
   .filters-row {
@@ -912,11 +926,12 @@
   .filter-select {
     width: 100%;
     min-width: 100%;
+    max-width: 100%;
   }
 
   .filter-toggles {
     width: 100%;
-    justify-content: space-between;
+    justify-content: space-around;
     border-left: none;
     border-right: none;
     border-top: 1px solid var(--border-color);
@@ -927,6 +942,7 @@
 
   .btn-clear {
     width: 100%;
+    justify-content: center;
   }
 
   .cards-grid {
@@ -946,13 +962,10 @@
   }
 
   .filter-toggles {
-    flex-direction: column;
+    flex-direction: row;
+    justify-content: space-around;
     gap: 8px;
-  }
-
-  .filter-toggle {
-    width: 100%;
-    justify-content: center;
+    flex-wrap: wrap;
   }
 
   .cards-grid {

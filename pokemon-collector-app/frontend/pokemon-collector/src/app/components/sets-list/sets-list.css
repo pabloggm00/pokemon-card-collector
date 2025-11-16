@@ -29,8 +29,8 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  min-width: 450px;
   justify-content: flex-end;
+  flex-wrap: wrap;
 }
 
 .search-box {
@@ -537,34 +537,35 @@ h1 {
 
 @media (max-width: 768px) {
   .sets-container {
-    padding: 12px;
+    padding: 24px 16px;
   }
 
   .top-bar {
-    padding: 12px;
-    gap: 12px;
+    padding: 16px;
+    gap: 16px;
   }
 
   .search-filter-group {
     flex-direction: column;
     width: 100%;
+    min-width: auto;
   }
 
   .search-box,
   .filter-select {
     width: 100%;
+    max-width: 100%;
   }
 
   .top-bar-actions {
     width: 100%;
-    flex-wrap: wrap;
-    min-width: auto;
   }
 
   .top-bar-actions button {
     flex: 1;
-    min-width: 100px;
-    font-size: 0.875rem;
+    min-width: 0;
+    font-size: 0.8125rem;
+    padding: 8px 12px;
   }
 
   .sets-grid {

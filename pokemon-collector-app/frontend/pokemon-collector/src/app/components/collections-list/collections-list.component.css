@@ -54,8 +54,8 @@
 .header-buttons {
   display: flex;
   gap: 12px;
-  min-width: 550px;
   justify-content: flex-end;
+  flex-wrap: wrap;
 }
 
 .header h1 {
@@ -417,7 +417,10 @@
     flex-direction: column;
     gap: 16px;
     align-items: stretch;
-    min-width: auto;
+  }
+
+  .search-container {
+    max-width: 100%;
   }
 
   .header h1 {
@@ -425,20 +428,19 @@
   }
 
   .header-buttons {
-    flex-wrap: wrap;
     gap: 8px;
   }
 
   .header-buttons button {
     flex: 1;
-    min-width: 140px;
-    font-size: 0.875rem;
+    min-width: 0;
+    font-size: 0.8125rem;
+    padding: 10px 16px;
     justify-content: center;
   }
 
   .btn-create {
-    width: 100%;
-    justify-content: center;
+    padding: 10px 16px;
   }
 
   .collections-grid {
